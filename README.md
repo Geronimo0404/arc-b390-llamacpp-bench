@@ -18,9 +18,7 @@
 
 ## 配置
 
-llama.cpp **b11429**，Vulkan 构建。
-
-`config.ini`：
+llama.cpp  b11429，Vulkan 构建。以下 `config.ini` 用于 `llama-server` 路由模式提供服务。它不参与下面的基准测试。
 
 ```ini
 [*]
@@ -49,19 +47,23 @@ llama-server --models-preset config.ini --models-max 1
 
 ## 基准
 
-`llama-bench -ngl 999 -p 64 -n 32 -r 3`
+```bash
+llama-bench -m Qwen3.6-35B-A3B-UD-IQ4_XS.gguf -ngl 999 -p 64 -n 32 -r 3 \
+            -fa on -ctk q8_0 -ctv q8_0
+```
 
-| 模型                    | 大小      | 参数             | pp64 (t/s)            | tg32 (t/s)          |
-| ----------------------- | --------- | ---------------- | --------------------- | ------------------- |
-| Qwen3.6-35B-A3B: IQ4_XS | 16.50 GiB | 34.66 B (3B激活) | **382.84 ± 18.75** | **30.02 ± 0.33** |
+| 模型                    | 大小      | 参数             | pp64 (t/s)                | tg32 (t/s)              |
+| ----------------------- | --------- | ---------------- | ------------------------- | ----------------------- |
+| Qwen3.6-35B-A3B: IQ4_XS | 16.50 GiB | 34.66 B (3B激活) | **378.91 ± 11.69** | **29.43 ± 0.17** |
 
-> pp64 = 提示词处理速度（64 token），tg32 = 生成速度（32 token），单位均为 token/秒。
+- `pp64` = 处理 64 token 提示词的速度，`tg32` = 生成 32 token 的速度
+- pp64 和 tg32 分别测量 64 token 的提示词处理速度与 32 token 的生成速度。本次未设置额外的上下文深度，结果不代表长上下文性能，也不代表填满 131,072 token 时的表现。
 
 ---
 
 ## 上下文与显存
 
-`-ngl 999 -fa on -ctk q8_0 -ctv q8_0`，模型加载后的进程 GPU 占用：
+`-ngl 999 -c 131072 -fa on -ctk q8_0 -ctv q8_0`，模型加载完成后读取：
 
 | 上下文  | GPU 占用  |
 | ------- | --------- |
@@ -69,12 +71,4 @@ llama-server --models-preset config.ini --models-max 1
 
 ---
 
-## 测试命令
-
-```bash
-llama-bench.exe -m <model.gguf> -ngl 999 -p 64 -n 32 -r 3
-```
-
----
-
-MIT
+[MIT](LICENSE)
