@@ -16,7 +16,7 @@
 
 ---
 
-## 配置
+## 推荐配置
 
 llama.cpp  b11429，Vulkan 构建。以下 `config.ini` 用于 `llama-server` 路由模式提供服务。它不参与下面的基准测试。
 
